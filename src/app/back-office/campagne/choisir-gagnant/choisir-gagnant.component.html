@@ -1,0 +1,143 @@
+
+<!-- App Header -->
+<div class="appHeader bg-primary text-light">
+  <div class="left">
+    <a (click)="backToPrevious()" class="headerButton">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </a>
+  </div>
+  <div class="pageTitle">Choisissez les gagnants</div>
+  <div class="right"> </div>
+</div>
+<!-- * App Header -->
+
+
+<!-- App Capsule -->
+<div id="appCapsule">
+
+  <ul class="listview image-listview">
+    <li>
+      <div class="item">
+        <div class="extraHeader">
+          <div class="search-form">
+            <div class="form-group searchbox">
+              <input type="text" (input)="filerDataPublication($event.target)" class="form-control" placeholder="Rechercher...">
+              <i class="input-icon">
+                <ion-icon name="search-outline" role="img" class="md hydrated" aria-label="search outline"></ion-icon>
+              </i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li *ngIf="oneCampagne != null">
+      <a class="item">
+        <div class="icon-box bg-warning">
+          <ion-icon name="calendar-outline" role="img" class="md hydrated" aria-label="share social outline"></ion-icon>
+        </div>
+        <div class="in">
+          <div style="width: 100%;">
+            <header>{{ oneCampagne.title }}</header>
+              <div class="col">
+                <span>
+                  {{ getMonthOfNumer(oneCampagne.mois) }} {{ oneCampagne.annee }}
+                </span>
+                <span [ngClass]="oneCampagne.status == 'EN COURS' ? 'badge badge-success float-right badge-plus' : 'badge badge-danger float-right badge-plus'">
+                  {{ oneCampagne.status }}
+                </span>
+                <span [ngClass]="nbreGagnant > 0 ? 'badge badge-success float-right me-1' : 'badge badge-danger float-right me-1'">
+                  {{ nbreGagnant }} <ion-icon name="trophy-outline"></ion-icon>
+                </span>
+            </div>
+            <footer class="mt-1">
+                {{ oneCampagne.content }}
+            </footer>
+          </div>
+        </div>
+      </a>
+    </li>
+
+    <li *ngFor="let element of postListFiltered">
+      <a data-bs-toggle="modal" data-bs-target="#DialogFormAction" class="item" (click)="selectItem(element)">
+        <div class="icon-box bg-warning">
+          <ion-icon name="videocam-outline" role="img" class="md hydrated" aria-label="share social outline"></ion-icon>
+        </div>
+        <div class="in">
+          <div>
+            <header>{{ element.titrecamapagne }}</header>
+            {{ element.postedAt.seconds * 1000 | date: 'dd' }}  {{ getMonthOfNumer(element.mois) }} {{ element.annee }}
+            <footer>
+              {{ element.postedBy.fullName }}
+            </footer>
+          </div>
+          <span class="text-muted text-warning ">Lire</span>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- Dialog Action  -->
+<div class="modal fade dialogbox" id="DialogFormAction" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Choisissez votre action</h5>
+          </div>
+          <ul class="listview image-listview">
+            <li data-bs-dismiss="modal" (click)="ouvrirLink(oneGagnant)" *ngIf="oneGagnant != null">
+                <div class="item">
+                    <div class="icon-box bg-primary">
+                        <ion-icon name="videocam-outline" role="img" class="md hydrated" aria-label="image outline"></ion-icon>
+                    </div>
+                    <div class="in">
+                        <div>Visualiser le média</div>
+                    </div>
+                </div>
+            </li>
+          <li data-bs-toggle="modal" data-bs-target="#DialogBasic" *ngIf="oneGagnant != null">
+            <div class="item">
+                <div class="icon-box bg-primary">
+                    <ion-icon name="trophy-outline" role="img" class="md hydrated" aria-label="image outline"></ion-icon>
+                </div>
+                <div class="in">
+                    <div>  Publier gagnant </div>
+                </div>
+            </div>
+           </li>
+            <li data-bs-dismiss="modal">
+                <div class="item">
+                    <div class="icon-box bg-danger">
+                        <ion-icon name="close" role="img" class="md hydrated" aria-label="musical notes outline"></ion-icon>
+                    </div>
+                    <div class="in">
+                        <div>Fermer</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+      </div>
+  </div>
+</div>
+<!-- * Dialog Form -->
+
+<!-- Dialog Basic -->
+<div class="modal fade dialogbox" id="DialogBasic" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Confirmation</h5>
+          </div>
+          <div class="modal-body">
+           Confirmez-vous la publication gagnante ?
+          </div>
+          <div class="modal-footer">
+              <div class="btn-inline">
+                  <a href="#" class="btn btn-text-secondary" data-bs-dismiss="modal">NON</a>
+                  <a href="#" class="btn btn-text-primary" data-bs-dismiss="modal" (click)="updatingPublication()">OUI</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- * Dialog Basic -->

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>917215871381-58r348sujrb0s5sb7vifhcvucpob9qmt.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.917215871381-58r348sujrb0s5sb7vifhcvucpob9qmt</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAojK9nR6SPLsxwxuWN1Z2mFDj0M_OWXao</string>
+	<key>GCM_SENDER_ID</key>
+	<string>917215871381</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.talent.heroes</string>
+	<key>PROJECT_ID</key>
+	<string>talent-heroes-2b998</string>
+	<key>STORAGE_BUCKET</key>
+	<string>talent-heroes-2b998.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:917215871381:ios:1805e3694473530686369c</string>
+</dict>
+</plist>

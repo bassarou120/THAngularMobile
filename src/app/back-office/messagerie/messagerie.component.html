@@ -1,0 +1,352 @@
+
+<!-- App Header -->
+<div class="appHeader bg-primary text-light">
+  <div class="left">
+    <a href="#" class="headerButton" data-bs-toggle="offcanvas" data-bs-target="#sidebarPanel">
+      <ion-icon name="menu-outline"></ion-icon>
+    </a>
+  </div>
+  <div class="pageTitle">Messagerie</div>
+  <div class="right">
+    <span class="badge badge-light">{{ messagerieListFiltered.length }}</span>
+  </div>
+</div>
+<!-- * App Header -->
+
+<!-- App Capsule -->
+<div id="appCapsule">
+
+  <ul class="listview image-listview">
+    <li>
+      <div class="item">
+        <div class="extraHeader">
+          <div class="search-form">
+            <div class="form-group searchbox">
+              <input type="text" (input)="filerData($event.target)" class="form-control" placeholder="Rechercher...">
+              <i class="input-icon">
+                <ion-icon name="search-outline" role="img" class="md hydrated" aria-label="search outline"></ion-icon>
+              </i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li *ngFor="let element of messagerieListFiltered">
+      <a data-bs-toggle="modal" data-bs-target="#DialogFormAction" class="item" (click)="getDetailMessagerie(element)">
+        <div [ngClass]="user != null && user.id == element.postedBy.id ? 'icon-box bg-warning': 'icon-box bg-danger'">
+          <ion-icon name="mail-outline" role="img" class="md hydrated" aria-label="share social outline"></ion-icon>
+        </div>
+        <div class="in">
+          <div style="width: 100%;">
+            <header>{{ element.title }}</header>
+              <div class="col">
+                <span>
+                  {{ element.postedAt.seconds * 1000 | date: 'dd-MM-yyyy HH:mm'}}
+                </span>
+                <span style="float: right;" [ngClass]="element.status == 'Important' ? 'badge badge-success me-1' : 'badge badge-danger me-1'">
+                  {{ element.status }}
+                </span>
+            </div>
+
+            <footer class="mt-1">
+              <div class="mt-1">
+                Auteur : {{ element.postedBy.fullName }}
+              </div>
+            </footer>
+          </div>
+          <span class="text-muted text-warning "></span>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+
+<div class="fab-button animate bottom-right">
+  <a data-bs-toggle="modal" data-bs-target="#ModalForm" class="fab" (click)="makeForm()">
+    <ion-icon name="add-outline" role="img" class="md hydrated" aria-label="add outline"></ion-icon>
+  </a>
+</div>
+<!-- Modal Form -->
+<div class="modal fade modalbox" id="ModalForm" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <button type="button" [disabled]="messagerieForm.invalid || isBusy == true" (click)="sendMessagerie()"
+            class="btn btn-primary rounded btn-sm">
+            <span *ngIf="user && user.role == 'ADMINISTRATEUR'">
+              {{ isBusy == false ? 'Publier' : 'Publication en cours ...' }} </span>
+            <span *ngIf="user && user.role != 'ADMINISTRATEUR'">
+              {{ isBusy == false ? 'Envoyer' : 'Envoi en cours ...' }} </span>
+          </button>
+        </div>
+        <a href="#" (click)="makeForm(); list()" data-bs-dismiss="modal" class="text-warning f-size-28 f-bold">
+          <ion-icon name="close-outline"></ion-icon>
+        </a>
+      </div>
+      <div class="modal-body">
+        <div class="login-form">
+          <div class="section mt-2">
+            <h1>Messagerie</h1>
+            <h4>Formulaire</h4>
+          </div>
+          <div class="section mt-4 mb-5">
+            <form [formGroup]="messagerieForm" *ngIf="messagerieForm">
+              <div class="form-group boxed">
+                <div class="input-wrapper">
+                  <label class="form-label" for="title">Objet</label>
+                  <input type="text" class="form-control" id="title" formControlName="title"
+                    placeholder="Objet du message">
+                  <i class="clear-input">
+                    <ion-icon name="close-circle"></ion-icon>
+                  </i>
+                  <span class="text-danger error-input f-size-12 mb-1"
+                    *ngIf="messagerieForm.get('title')?.touched && messagerieForm.get('title')?.errors">
+                    Champ obligatoire !
+                  </span>
+                </div>
+              </div>
+              <br>
+              <div class="form-group boxed">
+                <div class="input-wrapper">
+                  <label class="form-label" for="content">Contenu du message</label>
+                  <textarea class="form-control" formControlName="content" placeholder="Contenu du message"
+                    id="content"></textarea>
+                  <i class="clear-input">
+                    <ion-icon name="close-circle"></ion-icon>
+                  </i>
+                  <span class="text-danger error-input f-size-12 mb-1"
+                    *ngIf="messagerieForm.get('content')?.touched && messagerieForm.get('content')?.errors">
+                    Champ obligatoire !
+                  </span>
+                </div>
+              </div>
+
+
+              <div *ngIf="user && user.role == 'ADMINISTRATEUR'">
+
+                <div class="form-group boxed">
+                  <div class="input-wrapper">
+                    <label class="form-label" for="visibilite">Visibilité</label>
+                    <select class="form-control form-select" id="visibilite" (change)="generateUserListChoiced('a')"
+                      formControlName="visibilite">
+                      <option *ngFor="let element of visibiliteList" [value]="element.key">{{ element.name }}</option>
+                    </select>
+                    <span class="text-danger error-input f-size-12 mb-1"
+                      *ngIf="messagerieForm.get('visibilite')?.touched && messagerieForm.get('visibilite')?.errors">
+                      Champ obligatoire !
+                    </span>
+                  </div>
+                </div>
+                <br>
+                <div class="form-group" *ngIf="messagerieForm.get('visibilite')?.value =='ABONNÉS D\'UN PAYS'">
+                  <label class="form-label" for="countryId">Pays</label>
+                  <div class="wide-block pt-2 pb-2">
+                    <div class="form-check mb-1">
+                      <div class="search-form">
+                        <div class="form-group searchbox">
+                          <input type="text" (input)="filerDataCountry($event.target)" class="form-control"
+                            placeholder="Rechercher...">
+                          <i class="input-icon">
+                            <ion-icon name="search-outline" role="img" class="md hydrated"
+                              aria-label="search outline"></ion-icon>
+                          </i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-check mb-1 text-left" *ngFor="let element of countriesFilterList; let i=index">
+                      <input class="form-check-input"  (change)="selectCountryValue($event.target)" [value]="element.id" type="radio" name="flexRadioDefault" id="flexRadioDefault1{{i}}">
+                      <label class="form-check-label" for="flexRadioDefault1{{i}}">
+                        {{ element.name }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group" *ngIf="messagerieForm.get('visibilite')?.value =='GROUPE D\'ABONNÉS'">
+                  <label class="form-label" for="countryId">Abonnés concernés</label>
+                  <div class="wide-block pt-2 pb-2">
+                    <div class="form-check mb-1">
+                      <div class="search-form">
+                        <div class="form-group searchbox">
+                          <input type="text" (input)="filerDataUtilisateur($event.target)" class="form-control"
+                            placeholder="Rechercher...">
+                          <i class="input-icon">
+                            <ion-icon name="search-outline" role="img" class="md hydrated"
+                              aria-label="search outline"></ion-icon>
+                          </i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-check mb-1 text-left" *ngFor="let element of userFilteredTypingList; let i=index">
+                      <input class="form-check-input"  (change)="generateUserListSeletedChoiced($event, i)" type="checkbox" name="flexCheckBox" id="flexCheckBox1{{i}}">
+                      <label class="form-check-label" for="flexCheckBox1{{i}}">
+                        {{ element.fullName }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- * Modal Form -->
+
+
+<!-- Dialog Action  -->
+<div class="modal fade dialogbox" id="DialogFormAction" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Choisissez votre action</h5>
+          </div>
+          <ul class="listview image-listview">
+            <li data-bs-toggle="modal" data-bs-target="#DialogBasicInformation"  *ngIf="oneMessagerie">
+                <div class="item">
+                    <div class="icon-box bg-primary">
+                        <ion-icon name="mail-outline" role="img" class="md hydrated" aria-label="image outline"></ion-icon>
+                    </div>
+                    <div class="in">
+                        <div>Consulter le détail</div>
+                    </div>
+                </div>
+            </li>
+            <li (click)="chooseDeleteOrChangeStatus(2)" data-bs-toggle="modal" data-bs-target="#DialogBasic"  *ngIf="oneMessagerie != null && user != null && user.id == oneMessagerie.postedBy.id">
+              <div class="item">
+                  <div class="icon-box bg-primary">
+                      <ion-icon name="refresh-circle-outline" role="img" class="md hydrated" aria-label="image outline"></ion-icon>
+                  </div>
+                  <div class="in">
+                      <div> {{ oneMessagerie.status == 'Important' ? 'Archiver': 'Publier à nouveau' }}</div>
+                  </div>
+              </div>
+          </li>
+          <li (click)="chooseDeleteOrChangeStatus(1)" data-bs-toggle="modal" data-bs-target="#DialogBasic" *ngIf="oneMessagerie != null && user != null && user.id == oneMessagerie.postedBy.id">
+            <div class="item">
+                <div class="icon-box bg-primary">
+                    <ion-icon name="trash-outline" role="img" class="md hydrated" aria-label="image outline"></ion-icon>
+                </div>
+                <div class="in">
+                    <div>Supprimer</div>
+                </div>
+            </div>
+           </li>
+            <li data-bs-dismiss="modal">
+                <div class="item">
+                    <div class="icon-box bg-danger">
+                        <ion-icon name="close" role="img" class="md hydrated" aria-label="musical notes outline"></ion-icon>
+                    </div>
+                    <div class="in">
+                        <div>Fermer</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+      </div>
+  </div>
+</div>
+<!-- * Dialog Form -->
+
+<!-- Dialog Basic -->
+ <div class="modal fade dialogbox" id="DialogBasic" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Confirmation</h5>
+          </div>
+          <div class="modal-body">
+             {{ actionChoose == 1 ? 'Autorisez-vous la suppression ?' :' Autorisez-vous le changement de statut pour le message ?' }}
+          </div>
+          <div class="modal-footer">
+              <div class="btn-inline">
+                  <a href="#" class="btn btn-text-secondary" data-bs-dismiss="modal">NON</a>
+                  <a href="#" *ngIf="actionChoose == 1" class="btn btn-text-primary" data-bs-dismiss="modal" (click)="deletedMessagerie(oneMessagerie)">OUI</a>
+                  <a href="#" *ngIf="actionChoose == 2" class="btn btn-text-primary" data-bs-dismiss="modal" (click)="updatedMessagerieStatus(oneMessagerie)">OUI</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- * Dialog Basic -->
+
+ <!-- Modal Basic information -->
+ <div class="modal fade modalbox" id="DialogBasicInformation" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Message</h5>
+              <a href="#" data-bs-dismiss="modal" data-bs-dismiss="modal" class="text-warning f-size-28 f-bold">
+                <ion-icon name="close-outline"></ion-icon>
+              </a>
+          </div>
+          <div class="modal-body" *ngIf="oneMessagerie != null">
+            <ul class="listview">
+              <li>
+                <div class="in">
+                  <div style="width: 100%;">
+                    <header>Objet</header>
+                    <div class="col">
+                      <span> {{ oneMessagerie.title }} </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="in">
+                  <div style="width: 100%;">
+                    <header>Date et heure d'envoi</header>
+                    <div class="col">
+                      <span> {{ oneMessagerie.postedAt.seconds * 1000 | date: 'dd MMMM yyyy HH:mm'}} </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="in">
+                  <div style="width: 100%;">
+                    <header>Contenu du message</header>
+                    <div class="col">
+                      <span> {{ oneMessagerie.content }} </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="in">
+                  <div style="width: 100%;">
+                    <header>Auteur du message</header>
+                    <div class="col">
+                      <span> {{ oneMessagerie.postedBy.fullName }} </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="in">
+                  <div style="width: 100%;">
+                    <header>Statut du message</header>
+                    <div class="col">
+                      <span [ngClass]="oneMessagerie.status == 'Important' ? 'badge badge-success me-1' : 'badge badge-danger me-1'">
+                        {{ oneMessagerie.status }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+
+          </div>
+      </div>
+  </div>
+</div>
+<!-- * Modal Basic -->

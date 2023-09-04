@@ -1,0 +1,422 @@
+<!--<div class="container color-principal" style="position: fixed;z-index:11;padding-left:unset;">
+  <div class="row">
+    <div class="col-sm-2 col-xs-2 col-md-2 col-2">
+      <button (click)="homeBack()" class="left-back" style="margin-top:5px;">
+        <i class="las la-arrow-left"></i>
+      </button>
+    </div>
+    <div class="col-sm-8  col-xs-8 col-md-8 col-8">
+      <h4 style="padding-top:15px;padding-bottom: 15px;">{{ isSmsSending == false ? 'Inscription' : 'Confirmation' }}
+      </h4>
+    </div>
+  </div>
+</div>
+
+<div class="page-wrapper">
+
+   account section start
+  <div class="account-section bg_img no-padding min-height-90" data-background="assets/images/bg/bg-5.jpg">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-5 col-lg-7">
+          <div class="account-card">
+            <!--<div class="text-center color-principal">
+               <h2 class="section-title">Welcome to <span class="base--color">HYIPLAB</span></h2>
+              <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus distinctio deserunt impedit similique debitis voluptatum enim.</p>
+
+              <img src="assets/logo_th.jpg" style="height: 200px; width: 180px;">
+            </div>
+            <div class="account-card__body">
+
+              <div class="row" *ngIf="isSmsSending == false">
+                <div class="col-sm-6 col-xs-6 col-md-6 col-6 " [ngClass]="i == 0 ? 'border-bottom-argent-color font-weight-bold': 'color-font-principal'"
+                (click)="makeTabChoice(0)">
+                  <span style="margin-bottom: 10px;">Identité (1/2)</span>
+                </div>
+                <div class="col-sm-6  col-xs-6 col-md-6 col-6 " [ngClass]="i == 1 ? 'border-bottom-argent-color font-weight-bold': 'color-font-principal'"
+                (click)="makeTabChoice(1)">
+                  <span style="margin-bottom: 10px;">Identifiants (2/2)</span>
+                </div>
+              </div>
+
+
+              <div class="row" *ngIf="isSmsSending == true">
+                <div class="col-sm-12 col-xs-12 col-md-12 col-12 border-bottom-argent-color font-weight-bold"
+                (click)="makeTabChoice(0)">
+                  <span style="margin-bottom: 10px;">Confirmation de votre inscription</span>
+                </div>
+              </div>
+
+              <form class="mt-4 form-with-input" [formGroup]="singupForm">
+                <div *ngIf="i == 0 && isSmsSending == false">
+                  <div class="form-group">
+                    <input type="text"  formControlName="fullName" class="form-control" placeholder="Nom et prénom(s)">
+                    <span class="text-danger" *ngIf="singupForm.get('fullName')?.touched && singupForm.get('fullName')?.errors">
+                      Champ obligatoire !
+                    </span>
+                  </div>
+
+                  <div class="form-group">
+                    <ng-select  bindLabel="name"  [compareWith]="compareFn" formControlName="country" placeholder="Pays de provenance">
+                      <ng-option *ngFor="let element of countriesList"
+                                 [value]="element">{{ element.name  }}</ng-option>
+                    </ng-select>
+                    <span class="text-danger" *ngIf="singupForm.get('country')?.touched && singupForm.get('country')?.errors">
+                      Champ obligatoire !
+                    </span>
+                  </div>
+
+                  <div class="form-group subscribe-form">
+                    <button class="subscribe-btn button-post-pend-icon">
+                      <i class="las la-phone" style="font-size:12px;"></i>
+                      ({{ singupForm.get('country') && singupForm.get('country')?.value ? singupForm.get('country')?.value.codePhone : 'xxx'}})
+                    </button>
+                    <input type="text"  formControlName="phoneNumber" class="form-control input-post-pend-icon" placeholder="Téléphone">
+                    <span class="text-danger" *ngIf="singupForm.get('phoneNumber')?.touched && singupForm.get('phoneNumber')?.errors">
+                      Champ obligatoire !
+                    </span>
+                  </div>
+
+                </div>
+
+                <div *ngIf="isSmsSending == true">
+                  <div class="border-radius--5">
+                    <!--<div class="choose-card__header mb-3">
+                      <h4 class="choose-card__title base--color">Confirmation</h4>
+                    </div>
+                    <p style="margin-bottom: 20px;">Renseignez le code sms qui vous a été envoyé pour confirmer votre inscription.</p>
+                  </div>
+
+                  <div class="form-group subscribe-form">
+                    <button class="subscribe-btn button-post-pend-icon">
+                      <i class="las la-lock" style="font-size:12px;"></i>
+                    </button>
+                    <input type="text"  formControlName="codeVerification" class="form-control input-post-pend-icon" placeholder="Code sms de confirmation">
+                    <span class="text-danger" *ngIf="singupForm.get('codeVerification')?.touched && singupForm.get('codeVerification')?.errors">
+                      Champ obligatoire !
+                    </span>
+                  </div>
+                </div>
+
+                <div *ngIf="i == 1 && isSmsSending == false">
+                <div class="form-group">
+                  <input type="email" formControlName="email" class="form-control" placeholder="Email">
+                  <span class="text-danger" *ngIf="singupForm.get('email')?.touched && singupForm.get('email')?.errors">
+                    Champ invalide !
+                  </span>
+                </div>
+                <div class="form-group custom-input-field">
+                  <input *ngIf="isEye == false" type="password" formControlName="password" class="form-control" placeholder="Mot de passe">
+                  <input *ngIf="isEye == true" type="text" formControlName="password" class="form-control" placeholder="Mot de passe">
+                  <i class="fa fa-eye" *ngIf="isEye == true" (click)="makeEyeChange()"></i>
+                  <i class="fa fa-eye-slash" *ngIf="isEye == false" (click)="makeEyeChange()"></i>
+                  <span class="text-danger" *ngIf="singupForm.get('password')?.touched && singupForm.get('password')?.errors">
+                    Champ obligatoire !
+                  </span>
+                </div>
+                <div class="form-group custom-input-field">
+                  <input *ngIf="isEyeConfirmation == false" type="password" formControlName="confirmation" class="form-control" placeholder="Confirmation du mot de passe">
+                  <input *ngIf="isEyeConfirmation == true" type="text" formControlName="confirmation" class="form-control" placeholder="Confirmation du mot de passe">
+                  <i class="fa fa-eye" *ngIf="isEyeConfirmation == true" (click)="makeEyeConfirmationChange()"></i>
+                  <i class="fa fa-eye-slash" *ngIf="isEyeConfirmation == false" (click)="makeEyeConfirmationChange()"></i>
+                  <span class="text-danger" *ngIf="singupForm.get('confirmation')?.touched && singupForm.get('confirmation')?.errors">
+                    Champ obligatoire !
+                  </span>
+                </div>
+              </div>
+
+                <div class="form-row"  *ngIf="isSmsSending == false">
+                  <div class="col-sm-12 text-center">
+                    <p style="font-size:12px;">Vous avez déjà un compte ? <a routerLink="/login"
+                        class="base--color">Connectez-vous</a></p>
+                  </div>
+                </div>
+
+                <div class="form-row"  *ngIf="isSmsSending == true">
+                  <div class="col-sm-12 text-center">
+                    <p style="font-size:12px;">Vous n'avez pas reçu le code sms ?
+                      <a (click)="renvoyerCodeSms()"
+                        class="base--color">Renvoyer</a></p>
+                  </div>
+                </div>
+
+                <div class="form-row" style="margin-top: 10px;">
+                  <div class="col-1">
+                    <input type="checkbox"  formControlName="isRegleChecked" class="">
+                  </div>
+                  <div class="col-11">
+                    <p style="font-size:12px;" (click)="changeAccepteCondition()">
+                      J'ai lu et j'accepte les conditions d'utilisation </p>
+                  </div>
+                </div>
+
+                <div id="recaptcha-container">
+
+                </div>
+
+                <div class="mt-3">
+                  <button id="sign-in-button" class="cmn-btn width-100" (click)="singupAction()"
+                  [disabled]="isBusy == true || singupForm.invalid" *ngIf="isSmsSending == false"> {{ isBusy == false ?  'M\'inscrire' : 'Inscription en cours ...' }}
+                  </button>
+
+                  <button id="sign-in-button" class="cmn-btn width-100" (click)="confirmationCodeAndSavingUser()"
+                  [disabled]="isBusy == true || singupForm.invalid" *ngIf="isSmsSending == true">
+                   {{ isBusy == false ?  'Confirmer' : 'Confirmation en cours ...' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    account section end
+
+</div>  page-wrapper end -->
+
+<!-- App Header -->
+<div class="appHeader no-border transparent position-absolute">
+  <div class="left">
+    <a href="#" (click)="homeBack()" class="headerButton goBack">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </a>
+  </div>
+  <div class="pageTitle"></div>
+  <div class="right">
+    <a routerLink="/login" class="headerButton">
+      Connexion
+    </a>
+  </div>
+</div>
+<!-- * App Header -->
+
+<!-- App Capsule -->
+<div id="appCapsule">
+
+  <div id="someID" class=""> register</div>
+
+  <div class="login-form">
+    <div class="section">
+      <h1>{{ isSmsSending == false ? 'Inscription' : 'Confirmation' }}</h1>
+      <h4>Rejoignez-nous</h4>
+    </div>
+    <div class="section mt-2 mb-5">
+      <form [formGroup]="singupForm">
+        <div *ngIf="isSmsSending == false">
+          <div class="alert alert-outline-warning mb-1" role="alert">
+            Tous les champs se terminants par <strong> * </strong> sont obligatoires.
+          </div>
+          <div class="form-group boxed">
+            <div class="input-wrapper">
+              <input type="text" formControlName="fullName" class="form-control" id="name1"
+                placeholder="Nom et prénom(s) *">
+              <i class="clear-input">
+                <ion-icon name="close-circle"></ion-icon>
+              </i>
+              <span class="text-danger error-input f-size-12 mb-1"
+                *ngIf="singupForm.get('fullName')?.touched && singupForm.get('fullName')?.errors">
+                Champ obligatoire !
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group boxed">
+            <div class="input-wrapper">
+              <input type="text"
+                value="{{ singupForm.get('country') && singupForm.get('country')?.value ? singupForm.get('country')?.value.codePhone +' | '+ singupForm.get('country')?.value.name : '' }}"
+                class="form-control" id="country" placeholder="Sélectionner le pays *" autocomplete="off" readonly
+                data-bs-toggle="modal" data-bs-target="#ModalListview">
+              <ion-icon name="arrow-undo-outline" class="align-right input-prepend" data-bs-toggle="modal"
+                data-bs-target="#ModalListview"></ion-icon>
+            </div>
+          </div>
+
+          <div class="form-group boxed">
+            <div class="input-wrapper">
+              <input type="text" formControlName="phoneNumber" class="form-control" id="name1" placeholder="Téléphone">
+              <i class="clear-input">
+                <ion-icon name="close-circle"></ion-icon>
+              </i>
+              <span class="text-danger error-input f-size-12 mb-1"
+                *ngIf="singupForm.get('phoneNumber')?.touched && singupForm.get('phoneNumber')?.errors">
+                Champ obligatoire !
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group boxed">
+            <div class="input-wrapper">
+              <input type="email" formControlName="email" class="form-control" id="email1" placeholder="Email address *">
+              <i class="clear-input">
+                <ion-icon name="close-circle"></ion-icon>
+              </i>
+              <span class="text-danger error-input f-size-12 mb-1"
+                *ngIf="singupForm.get('email')?.touched && singupForm.get('email')?.errors">
+                Champ obligatoire !
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group boxed">
+            <div class="input-wrapper">
+              <input type="password" *ngIf="isEye == false" formControlName="password" class="form-control"
+                id="password1" placeholder="Mot de passe *" autocomplete="off">
+              <ion-icon name="eye-outline" class="align-right input-prepend" (click)="makeEyeChange()"
+                *ngIf="isEye == false"></ion-icon>
+              <input type="text" *ngIf="isEye == true" formControlName="password" class="form-control" id="password1"
+                placeholder="Mot de passe *" autocomplete="off">
+              <ion-icon name="eye-off-outline" class="align-right input-prepend" (click)="makeEyeChange()"
+                *ngIf="isEye == true"></ion-icon>
+              <i class="clear-input">
+                <ion-icon name="close-circle"></ion-icon>
+              </i>
+              <span class="text-danger error-input f-size-12 mb-1"
+                *ngIf="singupForm.get('password')?.touched && singupForm.get('password')?.errors">
+                Champ obligatoire !
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group boxed">
+            <div class="input-wrapper">
+              <input type="password" *ngIf="isEyeConfirmation == false" formControlName="confirmation"
+                class="form-control" id="password2" placeholder="Confirmation du mot de passe *" autocomplete="off">
+              <ion-icon name="eye-outline" class="align-right input-prepend" (click)="makeEyeConfirmationChange()"
+                *ngIf="isEyeConfirmation == false"></ion-icon>
+              <input type="text" *ngIf="isEyeConfirmation == true" formControlName="confirmation" class="form-control"
+                id="password2" placeholder="Confirmation du mot de passe *" autocomplete="off">
+              <ion-icon name="eye-off-outline" class="align-right input-prepend" (click)="makeEyeConfirmationChange()"
+                *ngIf="isEyeConfirmation == true"></ion-icon>
+              <i class="clear-input">
+                <ion-icon name="close-circle"></ion-icon>
+              </i>
+              <span class="text-danger error-input f-size-12 mb-1"
+                *ngIf="singupForm.get('confirmation')?.touched && singupForm.get('confirmation')?.errors">
+                Champ obligatoire !
+              </span>
+            </div>
+          </div>
+
+          <div class=" mt-1 text-start">
+            <div class="form-check">
+              <input type="checkbox" formControlName="isRegleChecked" class="form-check-input text-warning"
+                id="customCheckb1">
+              <label class="form-check-label" for="customCheckb1">J'accepte
+                <a href="#" data-bs-toggle="modal" data-bs-target="#ModalBasic" class="text-warning">les conditions
+                  d'utilisation *</a></label>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div *ngIf="isSmsSending == true">
+          <div class="alert alert-success mb-2" role="alert">
+            <h4 class="alert-title">Information !</h4>
+            Renseignez le code sms qui vous a été envoyé pour confirmer votre inscription.
+          </div>
+
+          <div class="form-group boxed">
+            <div class="input-wrapper">
+              <input type="text" class="form-control" formControlName="codeVerification"
+                placeholder="Renseigner le code ici" autocomplete="off">
+              <ion-icon name="mail-outline" class="align-right input-prepend"></ion-icon>
+              <span class="text-danger error-input f-size-12 mb-1"
+                *ngIf="singupForm.get('codeVerification')?.touched && singupForm.get('codeVerification')?.errors">
+                Champ obligatoire !
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="recaptcha-container">
+
+        </div>
+
+        <div class="form-button-group">
+          <button class="btn btn-dark btn-block btn-lg" (click)="singupAction()"
+            [disabled]="isBusy == true || singupForm.invalid || (singupForm && singupForm.get('isRegleChecked')?.value == false)"
+            *ngIf="isSmsSending == false">
+            {{ isBusy == false ? 'M\'inscrire' : 'Inscription en cours ...' }}
+          </button>
+
+
+          <button class="btn btn-dark btn-block btn-lg" (click)="confirmationCodeAndSavingUser()"
+            [disabled]="isBusy == true || singupForm.invalid" *ngIf="isSmsSending == true">
+            {{ isBusy == false ? 'Confirmer' : 'Confirmation en cours ...' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+<!-- * App Capsule -->
+
+
+
+<!-- Modal Listview -->
+<div class="modal fade modalbox" id="ModalListview" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Choisir le pays</h5>
+        <a href="#" data-bs-dismiss="modal" class="text-warning f-size-28 f-bold">
+          <ion-icon name="close-outline"></ion-icon>
+        </a>
+      </div>
+      <div class="modal-body p-0">
+
+        <ul class="listview flush mb-2">
+          <li>
+            <div class="item mb-2">
+              <div class="extraHeader">
+                <div class="search-form">
+                  <div class="form-group searchbox">
+                    <input type="text" [(ngModel)]="countryFilter" (input)="filterCountriesList()" class="form-control"
+                      placeholder="Rechercher...">
+                    <i class="input-icon">
+                      <ion-icon name="search-outline" role="img" class="md hydrated"
+                        aria-label="search outline"></ion-icon>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li data-bs-dismiss="modal" *ngFor="let element of countriesFilterList" (click)="selectCountryValue(element)">
+            <div class="item">
+              <!-- <img src="assets/img/sample/avatar/avatar1.jpg" alt="image" class="image"> -->
+              <div class="in">
+                <div>{{ element.name }}</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- * Modal Listview -->
+
+<!-- Modal Basic -->
+<div class="modal fade modalbox" id="ModalBasic" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Acceptez-vous les conditions ?</h5>
+        <a href="#" data-bs-dismiss="modal" class="text-warning f-size-28 f-bold">
+          <ion-icon name="close-outline"></ion-icon>
+        </a>
+      </div>
+      <div class="modal-body">
+
+        <app-condition-utilisation [isHome]="false"></app-condition-utilisation>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- * Modal Basic -->

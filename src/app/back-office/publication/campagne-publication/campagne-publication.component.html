@@ -1,0 +1,212 @@
+
+
+<!-- App Header -->
+<div class="appHeader bg-primary text-light">
+  <div class="left">
+    <a routerLink="/back-office/publication" *ngIf="oneCampagne != null" class="headerButton">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </a>
+    <a href="#" *ngIf="oneCampagne == null" class="headerButton" data-bs-toggle="offcanvas"
+      data-bs-target="#sidebarPanel">
+      <ion-icon name="menu-outline"></ion-icon>
+    </a>
+  </div>
+  <div class="pageTitle">Publication</div>
+  <div class="right">
+    <span class="badge badge-light">{{ postListFiltered.length }}</span>
+  </div>
+</div>
+<!-- * App Header -->
+
+<!-- App Capsule -->
+<div id="appCapsule">
+
+  <ul class="listview image-listview">
+    <li>
+      <div class="item">
+        <div class="extraHeader">
+          <div class="search-form">
+            <div class="form-group searchbox">
+              <input type="text" (input)="filerData($event.target)" class="form-control" placeholder="Rechercher...">
+              <i class="input-icon">
+                <ion-icon name="search-outline" role="img" class="md hydrated" aria-label="search outline"></ion-icon>
+              </i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li *ngIf="oneCampagne != null">
+      <a class="item">
+        <div class="icon-box bg-warning">
+          <ion-icon name="calendar-outline" role="img" class="md hydrated" aria-label="share social outline"></ion-icon>
+        </div>
+        <div class="in">
+          <div style="width: 100%;">
+            <header>{{ oneCampagne.title }}</header>
+              <div class="col">
+                <span>
+                  {{ getMonthOfNumer(oneCampagne.mois) }} {{ oneCampagne.annee }}
+                </span>
+                <span [ngClass]="oneCampagne.status == 'EN COURS' ? 'badge badge-success float-right badge-plus' : 'badge badge-danger float-right badge-plus'">
+                  {{ oneCampagne.status }}
+                </span>
+            </div>
+            <footer class="mt-1">
+                {{ oneCampagne.content }}
+            </footer>
+          </div>
+        </div>
+      </a>
+    </li>
+
+    <li *ngFor="let element of postListFiltered">
+      <a data-bs-toggle="modal" data-bs-target="#DialogFormAction" class="item" (click)="selectItem(element)">
+        <div [ngClass]="element.status == 'POSTÉ' ? 'icon-box bg-warning' : (element.status == 'BLOQUÉ' ? 'icon-box bg-danger' : 'icon-box bg-success')">
+          <ion-icon name="videocam-outline" role="img" class="md hydrated" aria-label="share social outline"></ion-icon>
+        </div>
+        <div class="in">
+          <div style="width: 100%;">
+            <header>
+            </header>
+              <div class="col">
+                <span>{{ element.postedAt.seconds * 1000 | date: 'dd' }}  {{ getMonthOfNumer(element.mois) }} {{ element.annee }}</span>
+                <!--<span [ngClass]="element.status == 'POSTÉ' ? 'badge badge-success float-right' : 'badge badge-danger float-right'">
+                  {{ element.status }}
+                </span>-->
+                <span *ngIf="element.status == 'POSTÉ'" class="badge badge-warning float-right badge-plus">
+                  {{ element.status }}
+                </span>
+                <span  *ngIf="element.status == 'BLOQUÉ'" class="badge badge-danger float-right badge-plus">
+                  {{ element.status }}
+                </span>
+                <span  *ngIf="element.status == 'GAGNÉ'" class="badge badge-success float-right badge-plus">
+                  {{ element.status }}
+                </span>
+            </div>
+            <footer>
+              {{ element.content }}
+            </footer>
+          </div>
+          <span class="text-muted text-warning "></span>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+<!-- Dialog Action  -->
+<div class="modal fade dialogbox" id="DialogFormAction" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Choisissez votre action</h5>
+          </div>
+          <ul class="listview image-listview">
+            <li data-bs-dismiss="modal" (click)="ouvrirDetail()" *ngIf="onPost != null && onPost.status == 'POSTÉ'">
+                <div class="item">
+                    <div class="icon-box bg-primary">
+                        <ion-icon name="videocam-outline" role="img" class="md hydrated" aria-label="image outline"></ion-icon>
+                    </div>
+                    <div class="in">
+                        <div>Consulter le détail</div>
+                    </div>
+                </div>
+            </li>
+          <li  data-bs-toggle="modal" data-bs-target="#DialogBasic" *ngIf="onPost != null">
+            <div class="item">
+                <div class="icon-box bg-primary">
+                    <ion-icon name="trash-outline" role="img" class="md hydrated" aria-label="image outline"></ion-icon>
+                </div>
+                <div class="in">
+                    <div>Supprimer</div>
+                </div>
+            </div>
+           </li>
+            <li data-bs-dismiss="modal">
+                <div class="item">
+                    <div class="icon-box bg-danger">
+                        <ion-icon name="close" role="img" class="md hydrated" aria-label="musical notes outline"></ion-icon>
+                    </div>
+                    <div class="in">
+                        <div>Fermer</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+      </div>
+  </div>
+</div>
+<!-- * Dialog Form -->
+
+<!-- Iconed Action Sheet
+<div class="offcanvas offcanvas-bottom action-sheet" tabindex="-1" id="actionSheetIconed">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Actions</h5>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="action-button-list">
+      <li *ngIf="onPost != null && onPost.status == 'POSTÉ'">
+        <a (click)="ouvrirDetail()" class="btn btn-list text-primary">
+          <span>
+            <ion-icon name="information-circle-outline"></ion-icon>
+            Consulter
+          </span>
+        </a>
+      </li>
+      <li *ngIf="onPost != null">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#DialogBasic" class="btn btn-list"
+          data-bs-dismiss="offcanvas">
+          <span>
+            <ion-icon name="trash-outline"></ion-icon>
+            Supprimer
+          </span>
+        </a>
+      </li>
+      <li class="action-divider" *ngIf="onPost != null"></li>
+      <li>
+        <a href="#" class="btn btn-list text-danger" data-bs-dismiss="offcanvas">
+          <span>
+            <ion-icon name="close-outline"></ion-icon>
+            Fermer
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+ Iconed Action Sheet -->
+
+<!-- Dialog Basic suppression -->
+<div class="modal fade dialogbox" id="DialogBasic" data-bs-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmation</h5>
+      </div>
+      <div class="modal-body">
+        Autorisez-vous la suppression ?
+      </div>
+      <div class="modal-footer">
+        <div class="btn-inline">
+          <a href="#" class="btn btn-text-secondary" data-bs-dismiss="modal">NON</a>
+          <a href="#" class="btn btn-text-primary" data-bs-dismiss="modal" (click)="deletedPost(onPost)">OUI</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- * Dialog Basic -->
+
+
+<!--<div class="fab-button animate bottom-right" *ngIf="oneCampagne != null">
+  <a data-bs-toggle="modal" data-bs-target="#ModalForm" class="fab">
+    <ion-icon name="add-outline" role="img" class="md hydrated" aria-label="add outline"></ion-icon>
+  </a>
+</div>-->
+<div class="fab-button animate bottom-right" *ngIf="oneCampagne != null">
+  <a routerLink="/back-office/nouvelle-publication/{{ oneCampagne.id }}" class="fab">
+    <ion-icon name="add-outline" role="img" class="md hydrated" aria-label="add outline"></ion-icon>
+  </a>
+</div>
